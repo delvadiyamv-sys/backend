@@ -1,0 +1,31 @@
+img{
+    max-width: 100px;
+    height: auto;
+
+}
+body{
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    color: #131111;
+}
+.heart {
+  cursor: pointer;
+  font-size: 22px;
+  color: #aaa;
+}
+
+.heart.liked {
+  color: red;
+}
+.like-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+}
+.like-box .like-count {
+  font-weight: bold;
+}

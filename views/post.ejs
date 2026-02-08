@@ -1,0 +1,173 @@
+<html>
+
+</html>
+
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .disabled {
+      opacity: .5;
+      color: aliceblue;
+
+    }
+  </style>
+
+  <title>Post</title>
+</head>
+
+<body>
+  <div class="container text-center mt-5">
+    <h1>Post Page</h1>
+    <a href="/home" class="btn btn-secondary mt-3">Back to Home</a>
+    <form action="/post" method="post">
+      <input type="text" name="title" placeholder="Title" class="form-control mt-3" required>
+      <textarea name="content" placeholder="Content" class="form-control mt-3" required></textarea>
+      <button type="submit" class="btn btn-primary mt-3">Create Post</button>
+
+    </form>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Content</th>
+          <th>Likes</th>
+          <th>Dislikes</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <% if (postdata) { %>
+          <% postdata.forEach(function(post) { %>
+            <tr>
+              <td>
+                <%= post.title %>
+              </td>
+              <td>
+                <%= post.content %>
+              </td>
+              <td > <a action="/post/like/<%= post._id %>" data-id='<%= post._id %>'
+                  style="width: auto; color: #000;" class="fa fa-heart <%= ['liked_' + post._id] ? 'disabled' : ''  %>"></a>
+                
+                <%= post.like %>  
+              </td>
+              <td class="dislike"> <a action="/post/dislike/<%= post._id %>" data-id='<%= post._id %>'
+                  style="width: auto; color: #000;" class="fa fa-thumbs-down"></a>
+                
+                <%= post.dislike %>
+              </td>
+              <td> <a href='/post/detailpage/<%= post._id %>' data-id='<%= post._id %>'
+                  class="btn btn-danger">moredetail</a></td>
+            </tr>
+            <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="4">No posts found.</td>
+                </tr>
+                <% } %>
+      </tbody>
+
+    </table>
+    <p class="success"></p>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $('form').on('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        var formData = $(this).serialize(); // Serialize form data
+
+        $.ajax({
+          type: 'POST',
+          url: '/post',
+          data: formData,
+          success: function (response) {
+            alert(response.message);
+            $('.success').text(response.message);
+          },
+          error: function (xhr, status, error) {
+            alert('Error: ' + xhr.responseText); // Show error message
+          }
+        });
+
+      });
+
+    });
+
+
+    $('.fa-heart').click(function (e) {
+      e.preventDefault();
+      console.log("like button clicked");
+      const icon = $(this)
+      postid = $(this).data('id');
+
+      console.log(postid);
+
+      $.ajax({
+        type: 'POST',
+        url: '/post/like/' + postid,
+        data: { id: postid },
+        success: function (response) {
+          alert(response.message);
+          $('.success').text(response.message);
+          $('.fa-heart').addClass("disabled");
+          icon.prop('disabled', true)
+          $('.like').text(response.like); // Update like count
+        },
+        error: function (xhr, status, error) {
+          alert('Error: ' + xhr.responseText); // Show error message
+        }
+      });
+
+
+    });
+
+    $('.fa-thumbs-down').click(function (e) {
+      e.preventDefault();
+      const icon = $(this)
+      postid = $(this).data('id');
+
+      console.log(postid);
+
+      $.ajax({
+        type: 'POST',
+        url: '/post/dislike/' + postid,
+        data: { id: postid },
+        success: function (response) {
+          alert(response.message);
+          $('.success').text(response.message);
+          $('.fa-thumbs-down').addClass("disabled");
+          icon.prop('disabled', true)
+          $('.dislike').text(response.dislike); // Update like count
+        },
+        error: function (xhr, status, error) {
+          alert('Error: ' + xhr.responseText); // Show error message
+        }
+      });
+
+
+    });
+
+
+
+  </script>
+</body>
+
+</html>
+
+</script>
+</body>
+
+</html>
