@@ -24,5 +24,5 @@ mongoose.connect('mongodb+srv://delvadiyamv:mvd246@blogdata.d2h8lsr.mongodb.net/
 app.use('/', route);
 
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`liked Server is running at http://localhost:${port}`);
 });
