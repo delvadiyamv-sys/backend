@@ -5,9 +5,9 @@ const router = express.Router();
 
 
 let createPost = async (req, res) => {
-    const { title, content, like, dislike } = req.body;
+    const { title, content, views, like, dislike } = req.body;
     try {
-        let postdata = new Post({ title, content, like, dislike });
+        let postdata = new Post({ title, content, views, like, dislike });
         await postdata.save();
         console.log('Post created:', postdata);
 

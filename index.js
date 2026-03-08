@@ -5,6 +5,27 @@ const route=require('./routes');
 const express = require('express');
 const bodyParser = require('body-parser');  
 const app = express();
+const Post = require('./model');
+var http = require('http').createServer(app);
+//var { Server } = require("socket.io");
+//var io = new Server(http);
+var io = require('socket.io')(http);
+
+io.on('connection', (socket) => {
+    console.log('a user:"mvpatel" connected');
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+    socket.on('updateviews', async (postId) => {
+      console.log('Updating views for post:', postId); 
+      var data= await Post.findByIdAndUpdate(postId, { $inc: { views: 1 } }, { new: true });
+      socket.broadcast.emit('viewupdated', data); 
+      // Here you would typically update the view count in your database
+  });
+})
+app.use('/', route);
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const port = 3000;
@@ -23,6 +44,6 @@ mongoose.connect('mongodb+srv://delvadiyamv:mvd246@blogdata.d2h8lsr.mongodb.net/
 
 app.use('/', route);
 
-app.listen(port, () => {
+http.listen(port, () => {
     console.log(`liked Server is running at http://localhost:${port}`);
 });

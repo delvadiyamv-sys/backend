@@ -20,24 +20,23 @@
   <link rel="stylesheet" href="style.css">
   <style>
     .like-btn {
-  border: none;
-  background: none;
-  cursor: pointer;
-}
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
 
-.like-btn.disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
+    .like-btn.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
 
-.fa-heart {
-  color: gray;
-}
+    .fa-heart {
+      color: gray;
+    }
 
-.fa-heart.liked {
-  color: red;
-}
-
+    .fa-heart.liked {
+      color: red;
+    }
   </style>
 </head>
 
@@ -50,48 +49,69 @@
   <p>Likes: <%= post.like %>
   </p>
   <a href="/post" class="btn btn-secondary mt-3">Back to Posts</a>
+  <b class="viewscount">
+  <% userLiked=true; %>
+    <% if(post.views){ %>
+      Views: <%= post.views %>
+        <% } else { %>
+          Views: 0
+          <% } %>
+        </b>
+            <form id="likeForm" action="/post/<%= post._id %>/like" method="POST">
+              <button type="submit" class="like-btn" id="likeButton" <%=userLiked ? 'disabled' : '' %>>
+                <i class="fa fa-heart <%= userLiked ? 'liked' : '' %>"></i> Like
+              </button>
+              <script src="/socket.io/socket.io.js"></script>
+              <script>
+                var socket = io();
+                var postId = "<%= post._id %>"
+                socket.emit("updateviews", postId);
+                
+                socket.on("viewupdated", function (data) {
+                  if (postId === data.postId) {
+                    console.log("View count updated:", data);
+                    // Update the view count on the page
+                    $('.viewscount').text('Views: ' + data.views);
+                    // Update the view count on the page
+                   
+                  }
+                  
+                });
 
-  <% userLiked = true; %>
+              </script>
 
-  <form id="likeForm" action="/post/<%= post._id %>/like" method="POST">
-    <button type="submit" class="like-btn" id="likeButton" <%= userLiked ? 'disabled' : '' %>>
-      <i class="fa fa-heart <%= userLiked ? 'liked' : '' %>"></i> Like
-    </button> 
+              <script>
+                $(document).ready(function () {
+                  $('#likeForm').on('submit', function (event) {
+                    event.preventDefault(); // Prevent the default form submission
 
-
-
-     <script>
-    $(document).ready(function() {
-      $('#likeForm').on('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        $.ajax({
-          type: 'POST',
-          url: '/post/<%= post._id %>/like',
-          success: function(response) {
-            // Update the like count on the page
-            $('p').text('Likes: ' + response.newLikeCount);
-            // Disable the like button and change its appearance
-            $('#likeButton').prop('disabled', true);
-            $('#likeButton i').addClass('liked');
-          },
-          error: function(error) {
-            console.error('Error liking the post:', error);
-          }
-        });
-      });
-    });
-     </script>
-  
-   
-  
+                    $.ajax({
+                      type: 'POST',
+                      url: '/post/<%= post._id %>/like',
+                      success: function (response) {
+                        // Update the like count on the page
+                        $('p').text('Likes: ' + response.newLikeCount);
+                        // Disable the like button and change its appearance
+                        $('#likeButton').prop('disabled', true);
+                        $('#likeButton i').addClass('liked');
+                      },
+                      error: function (error) {
+                        console.error('Error liking the post:', error);
+                      }
+                    });
+                  });
+                });
+              </script>
 
 
-  
-    
 
-    
-      
+
+
+
+
+
+
+
 
 </body>
 
