@@ -2,13 +2,46 @@ const { lookupService } = require('node:dns');
 const Post = require('./model');
 const express = require('express');
 const router = express.Router();
-
+const nodemailer = require('nodemailer');
 
 let createPost = async (req, res) => {
-    const { title, content, views, like, dislike } = req.body;
+    const { title, email, content, views, like, dislike } = req.body;
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "mvpatel2426@gmail.com",
+            pass: "agsd agir icuo szas"
+        }
+    });
+    const mailOptions = {
+        from: "mvpatel2426@gmail.com",
+
+        to: "dipikapatel0124@gmail.com",
+
+        subject: "Contact Form Message",
+        text: `Name: ${title} Email: ${email} Message: ${content}`
+    };
+    const mailOptions2 = {
+        from: "mvpatel2426@gmail.com",
+
+        to: "delvadiyamv@gmail.com",
+
+        subject: "Contact Form Message",
+        text: `someone has created a post with title: ${title} and email: ${email} and content: ${content}`
+    };
     try {
-        let postdata = new Post({ title, content, views, like, dislike });
+        let postdata = new Post({ title, email, content, views, like, dislike });
         await postdata.save();
+        transporter.sendMail(mailOptions).then(info => {
+            console.log("Email sent: " + info.response);
+        }).catch(error => {
+            console.error("Error sending email: ", error);
+        });
+        transporter.sendMail(mailOptions2).then(info => {
+            console.log("Email sent: " + info.response);
+        }).catch(error => {
+            console.error("Error sending email: ", error);
+        });
         console.log('Post created:', postdata);
 
         res.send({ success: true, message: 'Post created successfully', post: postdata });
@@ -48,31 +81,31 @@ let likePost = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-;
+    ;
 };
 let likePage = async (req, res) => {
-     const postId = req.params.id;
-  const cookieKey = `liked_${postId}`;
-  const cookies = req.cookies;
-  console.log('Cookies:', cookies); // Log cookies to the console
-  if (req.cookies[cookieKey]) {
-    return res.json({ liked: true }); // already liked
-  }
+    const postId = req.params.id;
+    const cookieKey = `liked_${postId}`;
+    const cookies = req.cookies;
+    console.log('Cookies:', cookies); // Log cookies to the console
+    if (req.cookies[cookieKey]) {
+        return res.json({ liked: true }); // already liked
+    }
 
-  await Post.findByIdAndUpdate(postId, { $inc: { likes: 1 } });
-  res.cookies(cookieKey, true, { maxAge: 365 * 24 * 60 * 60 * 1000 });
+    await Post.findByIdAndUpdate(postId, { $inc: { likes: 1 } });
+    res.cookies(cookieKey, true, { maxAge: 365 * 24 * 60 * 60 * 1000 });
 
-  res.render('post', { postId }, {cookies:cookies} );
- 
-  return    
+    res.render('post', { postId }, { cookies: cookies });
+
+    return
 
 
-  res.json({ liked: false });
+    res.json({ liked: false });
 };
 
 
 
-let dislikePost = async(req, res) => {
+let dislikePost = async (req, res) => {
     try {
         const postId = req.params.id
         const cookies = req.cookies

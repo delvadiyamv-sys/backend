@@ -10,6 +10,36 @@ var http = require('http').createServer(app);
 //var { Server } = require("socket.io");
 //var io = new Server(http);
 var io = require('socket.io')(http);
+const nodemailer = require('nodemailer');
+
+// Create a transporter for sending emails
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'mvpatel2426@gmail.com',
+        pass: 'agsd agir icuo szas'
+    }
+});
+ 
+    const mailOptions = {
+        from: 'mvpatel2426@gmail.com',
+        to: 'delvadiyamv@gmail.com',
+        subject: 'nodemailer test for blog',
+        text: 'This is a test email sent using Nodemailer.'
+    };
+    //transporter.sendMail(mailOptions, (error, info) => {
+        //if (error) {
+            //console.log(error);
+        //} else {
+            //console.log('Email sent: ' + info.response);
+        //}
+    //});
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 
 io.on('connection', (socket) => {
     console.log('a user:"mvpatel" connected');
@@ -28,7 +58,7 @@ app.use('/', route);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const port = 3000;
+const port = 8000;
 app.use(express.json());
 //app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));

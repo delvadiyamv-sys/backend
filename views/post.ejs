@@ -33,6 +33,7 @@
     <a href="/home" class="btn btn-secondary mt-3">Back to Home</a>
     <form action="/post" method="post">
       <input type="text" name="title" placeholder="Title" class="form-control mt-3" required>
+      <input type="email" name="email" placeholder="Email" class="form-control mt-3" required>
       <textarea name="content" placeholder="Content" class="form-control mt-3" required></textarea>
       <button type="submit" class="btn btn-primary mt-3">Create Post</button>
 
@@ -42,6 +43,7 @@
       <thead>
         <tr>
           <th>Title</th>
+          <th>Email</th>
           <th>Content</th>
           <th>Likes</th>
           <th>Dislikes</th>
